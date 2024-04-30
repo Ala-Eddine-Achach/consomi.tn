@@ -1,7 +1,8 @@
 import { Prop, Schema } from "@nestjs/mongoose";
 import { Product } from "src/product/entities/product.entity";
 
-@Schema()
+// @Schema({_id:false})
+// @Schema({ collection: 'products' }) // Setting collection name explicitly
 export class Clothes extends Product {
     @Prop({required: true})
     brand: string;

@@ -1,9 +1,8 @@
 export enum Category {
-    ALIMENTATION = "alimentation",
-    ANIMAL="animal",
-    CAR="car",
-    CLOTHES="clothes",
-    TECH="tech",
-    FURNITURE="furniture",
-    JEWELRY="jewelry",
+    ANIMAL="Animal",
+    CAR="Car",
+    CLOTHES="Clothes",
+    TECH="Tech",
+    FURNITURE="Furniture",
+    JEWELRY="Jewelry",
 }

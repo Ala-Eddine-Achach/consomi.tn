@@ -6,12 +6,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  // Swagger Documentation Building
   const config = new DocumentBuilder()
     .setTitle('ConsommiDotTN APIs')
     .setDescription('Endpoints for e-commerce site with some ML')
     .setVersion('1.0')
     .build();
-
+  // 
   const PORT = process.env.PORT || 3000;
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());

@@ -1,7 +1,7 @@
 import { Prop, Schema } from "@nestjs/mongoose";
 import { Product } from "./product.entity";
 
-@Schema()
+@Schema({_id:false})
 export class Tech extends Product {
     @Prop({required: true})
     batteryLife: string;

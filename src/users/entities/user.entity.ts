@@ -3,8 +3,6 @@ import { Address } from "src/common/address/address";
 import { Role } from "src/enum/user-role.enum";
 @Schema()
 export class User {
-    @Prop({ required: true, unique: true   })
-    id: string;
     @Prop({ required: true })
     address: Address;
     @Prop({ required: true })
