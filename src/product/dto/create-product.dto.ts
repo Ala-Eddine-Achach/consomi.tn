@@ -1,5 +1,4 @@
 import { NotFoundException } from '@nestjs/common';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { Type } from 'class-transformer';
 import { IsDefined, IsEnum, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { City } from 'src/enum/city.enum';

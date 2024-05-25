@@ -1,90 +1,67 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
+import { Role } from "src/enum/user-role.enum";
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel("User") private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
+  ) {}
 
-  /**
-   * adds a User object into the database
-   * d
-   * @param user : User must be a User object, id and _id should not be provided
-   */
   async add(user: User) {
-    const userDocument = new this.userModel(user);
-    console.log("the user we are going to insert is : ");
-    userDocument.id = userDocument._id.toString();
-    console.log(userDocument);
-    return await userDocument.save();
+    return await this.userRepository.save(user);
   }
 
-  async CreateFirstUser() {
-    //new uuid
-    const uuid = require("uuid");
-
-    const user = new this.userModel({
-      id: uuid.v4(),
-      name: "John",
-      lastName: "Doe",
-      email: "John@mail",
+  async createFirstUser() {
+    console.log("CreateFirstUser 1111");
+    const user = this.userRepository.create({
+      name: "Johnrt",
+      lastName: "Dortghthe",
+      email: "John@mthail.com",
       password: "12345678",
       phone: "12345678",
-      address: {
-        city: "Tunis",
-        street: "Tunis",
-        postalCode: "1000",
-      },
+      city: "Tunis",
+      street: "Tunis",
+      postalCode: "1000",
       isApproved: true,
-      role: "admin",
+      role: Role.ADMIN, // Replace "admin" with a valid value from the Role enum
     });
-    console.log(user);
-    return user.save();
+    return await this.userRepository.save(user);
   }
 
   async findByEmail(email: string): Promise<User> {
-    return User.fromDoc(
-      await this.userModel.findOne({ email: email }).lean().exec(),
-    );
+    return await this.userRepository.findOne({where: {email}});
   }
 
-  async findAll(transform: boolean = true): Promise<User[]> {
-    const users = await this.userModel.find().lean().exec();
-    if (transform || true) return users.map((doc) => User.fromDoc(doc));
-    /*    users.forEach((user, index) => {
-          users[index].id = user._id.toString();
-          delete users[index]._id;
-          delete users[index]["__v"];
-        });
-        return users;*/
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
   async findOne(id: string): Promise<User> {
-    const userDoc = await this.userModel.findById(id).lean().exec();
-    return User.fromDoc(userDoc);
-  }
-
-  update(id: string, updateUserDto: UpdateUserDto) {
-    //verify the user exist
-    this.verifyUserExsitance(id);
-
-    const user = this.userModel.findOneAndUpdate({ id: id }, updateUserDto);
-
+    const user = await this.userRepository.findOne({where: {id}});
+    if (!user) {
+      throw new NotFoundException(`User with ID '${id}' not found`);
+    }
     return user;
   }
 
-  remove(id: string) {
-    //verify the user exist
-    this.verifyUserExsitance(id);
-    //delete the user
-    const user = this.userModel.findOneAndUpdate({ id: id });
-    return user;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(id);
+    this.userRepository.merge(user, updateUserDto);
+    return await this.userRepository.save(user);
+  }
+
+  async remove(id: string) {
+    const user = await this.findOne(id);
+    return await this.userRepository.remove(user);
   }
 
   async verifyUserExsitance(id: string): Promise<boolean> {
-    const finduser = await this.userModel.findOne({ id: id });
-    return Boolean(finduser);
+    const user = await this.userRepository.findOne({where: {id}});
+    return Boolean(user);
   }
 }

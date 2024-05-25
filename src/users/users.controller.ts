@@ -29,7 +29,7 @@ export class UsersController {
 
   @Get("test")
   async test() {
-    return await this.usersService.CreateFirstUser();
+    return await this.usersService.createFirstUser();
   }
 
   @Post()
@@ -45,16 +45,14 @@ export class UsersController {
   }
 
   @Get()
-  async findAll(
-    @Query("transform")
-    transform: boolean, // Type hint for clarity
-  ) {
-    return this.usersService.findAll(Boolean(transform));
+  async findAll() {
+    return this.usersService.findAll();
   }
 
   @Get("createFirstUser")
   CreateFirstUser() {
-    return this.usersService.CreateFirstUser();
+    console.log("CreateFirstUser");
+    return this.usersService.createFirstUser();
   }
 
   @Get(":id")

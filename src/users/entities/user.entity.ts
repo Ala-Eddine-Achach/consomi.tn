@@ -1,43 +1,45 @@
-import { Prop, Schema } from "@nestjs/mongoose";
-import { Role } from "src/enum/user-role.enum";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ObjectIdColumn } from 'typeorm';
+import { Role } from 'src/enum/user-role.enum';
+import { Product } from 'src/product/entities/product.entity';
 
-@Schema()
+@Entity()
 export class User {
-  constructor() {
-    this.role = Role.USER;
-    this.isApproved = false;
-  }
+  @ObjectIdColumn()
+  _id: string;
 
-  static fromDoc(doc: any): User {
-    const { _id = null, __v = null, ...user } = { ...doc };
-
-    return user;
-  }
-
-  @Prop()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Prop({ required: true })
+
+  @Column({ length: 255, nullable: false, unique: true})
   email: string;
-  @Prop({ required: true })
+
+  @Column({ length: 255, nullable: false })
   name: string;
-  @Prop({ required: true })
+
+  @Column({ length: 255, nullable: false })
   lastName: string;
-  @Prop({ required: true })
+
+  @Column({ length: 255, nullable: false })
   password: string;
 
-  @Prop({ maxlength: 8, minlength: 8 })
+  @Column({ length: 8, nullable: true })
   phone: string;
 
-  @Prop()
+  @Column({ length: 255, nullable: true })
   city: string;
-  @Prop()
+
+  @Column({ length: 255, nullable: true })
   street: string;
-  @Prop()
+
+  @Column({ length: 255, nullable: true })
   postalCode: string;
 
-  @Prop({ required: true, default: false })
+  @Column({ type: 'boolean', nullable: false, default: false })
   isApproved: boolean;
 
-  @Prop({ required: true, enum: Role, default: Role.USER }) // Reference the Role enum
+  @Column({ type: 'enum', enum: Role, nullable: false, default: Role.USER }) // Reference the Role enum
   role: Role;
+
+  @ManyToOne(() => Product, product => product.owner)
+  products: Product[];
 }
