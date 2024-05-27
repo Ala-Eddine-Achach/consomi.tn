@@ -1,22 +1,28 @@
 # schema.graphql
+scalar  JSON
 type Product {
     id: ID!
     name: String!
     description: String!
     price: Float!
-}
+    quantity: Int
 
-type User {
-    id: ID!
-    name: String!
-    email: String!
+    discount: Int
+
+    isAvailable: Boolean
+
+    status: String
+
+    category: String
+
+    location: String
+
+    details: JSON
 }
 
 type Query {
     getProduct(id: ID!): Product
     getAllProducts: [Product]
-    getUser(id: ID!): User
-    getAllUsers: [User]
 }
 
 input ProductInput {
@@ -25,14 +31,10 @@ input ProductInput {
     price: Float!
 }
 
-input UserInput {
-    name: String!
-    email: String!
-}
+
 
 type Mutation {
     createProduct(input: ProductInput!): Product
     updateProduct(id: ID!, input: ProductInput!): Product
     deleteProduct(id: ID!): Product
-    createUser(input: UserInput!): User
 }

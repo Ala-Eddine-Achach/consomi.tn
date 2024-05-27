@@ -1,12 +1,4 @@
-import { NotFoundException } from "@nestjs/common";
-import { Type } from "class-transformer";
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from "class-validator";
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { City } from "src/enum/city.enum";
 import { ApproveStatus } from "src/enum/product-approve-status.enum";
 import { Category } from "src/enum/product-category.enum";
@@ -38,17 +30,17 @@ export class CreateProductDto {
   image: string;
 
   @IsNotEmpty()
-  @ValidateNested()
-  @Type((value: any) => {
-    console.log(Object.getOwnPropertyNames(DetailsDTOType));
-    const category = value.newObject.category;
-    console.log(value.newObject.category);
-
-    if (!Object.getOwnPropertyNames(DetailsDTOType).includes(category))
-      throw new NotFoundException("Invalid category");
-    return DetailsDTOType[value];
-  })
-  details: ClothesDetailsDto | TechDetailsDto;
+  // @ValidateNested()
+  /*  @Type((value: any) => {
+          console.log(Object.getOwnPropertyNames(DetailsDTOType));
+          const category = value.newObject.category;
+          console.log(value.newObject.category);
+      
+          if (!Object.getOwnPropertyNames(DetailsDTOType).includes(category))
+            throw new NotFoundException("Invalid category");
+          return DetailsDTOType[value];
+        })*/
+  details: any;
 }
 
 export class ClothesDetailsDto {

@@ -15,12 +15,21 @@ export class ProductResolver {
 
   @Query("getProduct")
   async getProduct(@Args("id") id: string): Promise<Product> {
-    return this.productService.findOne(id);
+    let pro = await this.productService.findOne(id);
+    pro.details = JSON.stringify(pro.details);
+    console.log(pro);
+    return pro;
   }
 
   @Query("getAllProducts")
   async getAllProducts(): Promise<Product[]> {
-    return this.productService.findAll();
+    let pros = await this.productService.findAll();
+    pros.forEach(
+      (pro, index, array) =>
+        (array[index].details = JSON.stringify(pro.details)),
+    );
+    console.log(pros);
+    return pros;
   }
 
   @Mutation("createProduct")
