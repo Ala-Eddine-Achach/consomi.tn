@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { InjectModel } from "@nestjs/mongoose";
@@ -29,7 +33,8 @@ export class ProductService {
   async add(product: Product) {
     const productDocument = new this.productModel(product);
     productDocument.id = productDocument._id.toString();
-    return await productDocument.save();
+    await productDocument.save();
+    return productDocument.id;
   }
 
   /**
@@ -39,7 +44,7 @@ export class ProductService {
    * @param userId
    */
   async create(
-    createProductDto: CreateProductDto,
+    createProductDto: CreateProductDto | any,
     userId: string,
     imageId?: string,
   ) {
@@ -51,17 +56,19 @@ export class ProductService {
       ...newProduct,
       ...createProductDto,
     };
-    let added = await this.add(newProduct);
+    let id = await this.add(newProduct);
     if (imageId) {
       try {
-        await fs.mkdir(`uploads/products/${added.id}`);
+        await fs.mkdir(`uploads/products/${id}`);
         await fs.rename(
           `uploads/temp/${imageId}.jpg`,
-          `uploads/products/${added.id}/0.jpg`,
+          `uploads/products/${id}/0.jpg`,
         );
       } catch (e) {}
     }
-    return added.id;
+    const toRet = await this.findOne(id);
+    console.log(toRet);
+    return toRet;
   }
 
   async discover(imageContent) {
@@ -116,24 +123,33 @@ export class ProductService {
   }
 
   async findOne(id: string): Promise<Product> {
-    const product = await this.productModel.findById(id).exec();
+    const product = await this.productModel.findById(id).lean().exec();
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
-    return product;
+    return Product.fromDoc(product);
   }
 
   async update(
     id: string,
     updateProductDto: UpdateProductDto,
+    userId: string,
   ): Promise<Product> {
+    const oldProuct = await this.findOne(id);
+    if (!oldProuct) throw new Error("Product not found");
+    console.log(oldProuct.owner.toString());
+    console.log(userId);
+    if (oldProuct.owner.toString() !== userId.toString())
+      throw new ForbiddenException("This Product doesn't belong to you");
     const updatedProduct = await this.productModel
       .findByIdAndUpdate(id, updateProductDto, { new: true })
+      .lean()
       .exec();
     if (!updatedProduct) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
-    return updatedProduct;
+    console.log(updatedProduct);
+    return Product.fromDoc(updatedProduct);
   }
 
   async remove(id: string): Promise<Product> {

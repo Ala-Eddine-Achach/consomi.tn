@@ -27,19 +27,16 @@ export class CreateProductDto {
   location: City;
 
   @IsNotEmpty()
-  image: string;
-
-  @IsNotEmpty()
   // @ValidateNested()
   /*  @Type((value: any) => {
-          console.log(Object.getOwnPropertyNames(DetailsDTOType));
-          const category = value.newObject.category;
-          console.log(value.newObject.category);
-      
-          if (!Object.getOwnPropertyNames(DetailsDTOType).includes(category))
-            throw new NotFoundException("Invalid category");
-          return DetailsDTOType[value];
-        })*/
+            console.log(Object.getOwnPropertyNames(DetailsDTOType));
+            const category = value.newObject.category;
+            console.log(value.newObject.category);
+        
+            if (!Object.getOwnPropertyNames(DetailsDTOType).includes(category))
+              throw new NotFoundException("Invalid category");
+            return DetailsDTOType[value];
+          })*/
   details: any;
 }
 
@@ -120,5 +117,5 @@ export class TechDetailsDto {
 
 const DetailsDTOType = {
   clothes: ClothesDetailsDto,
-  tech: TechDetailsDto,
+  tech: TechDetailsDto
 };

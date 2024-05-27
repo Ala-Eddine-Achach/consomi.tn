@@ -1,5 +1,4 @@
-// products/models/product.model.ts
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
 export class Product {
@@ -12,7 +11,7 @@ export class Product {
   @Field(() => String)
   description: string;
 
-  @Field(() => Int)
+  @Field(() => Float) // Assuming price is a floating-point number
   price: number;
 
   @Field(() => Int)
@@ -33,6 +32,6 @@ export class Product {
   @Field(() => String)
   location: string;
 
-  @Field(() => String)
-  details: string;
+  @Field(() => JSON) // Assuming details is a JSON object
+  details: any; // Replace 'any' with a specific type if you know the structure
 }

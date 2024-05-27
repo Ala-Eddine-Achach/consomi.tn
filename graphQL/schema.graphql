@@ -1,22 +1,16 @@
 # schema.graphql
 scalar  JSON
 type Product {
-    id: ID!
-    name: String!
-    description: String!
-    price: Float!
+    id: ID
+    name: String
+    description: String
+    price: Float
     quantity: Int
-
     discount: Int
-
     isAvailable: Boolean
-
     status: String
-
     category: String
-
     location: String
-
     details: JSON
 }
 
@@ -29,9 +23,14 @@ input ProductInput {
     name: String!
     description: String!
     price: Float!
+    quantity: Int!
+    discount: Int!
+    isAvailable: Boolean!
+    status: String!
+    category: String!
+    location: String!
+    details: JSON!
 }
-
-
 
 type Mutation {
     createProduct(input: ProductInput!): Product

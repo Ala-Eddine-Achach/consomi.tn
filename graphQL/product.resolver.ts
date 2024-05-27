@@ -1,13 +1,13 @@
 // product.resolver.ts
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { ProductService } from "../src/product/product.service";
-import { CreateProductDto } from "../src/product/dto/create-product.dto";
 import { UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "../src/auth/guards/jwt-auth.guard";
-import { CurrentUser } from "../src/auth/decorators/user.decorator";
 import { User } from "../src/users/entities/user.entity";
 import { UpdateProductDto } from "../src/product/dto/update-product.dto";
 import { Product } from "./product.model";
+import { GqlAuthGuard } from "../src/auth/guards/gql-auth.guard";
+import { GQLCurrentUser } from "../src/auth/decorators/gql-user.decorator";
+import { CreateProductDto } from "../src/product/dto/create-product.dto";
 
 @Resolver((of) => Product)
 export class ProductResolver {
@@ -33,21 +33,21 @@ export class ProductResolver {
   }
 
   @Mutation("createProduct")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GqlAuthGuard)
   async createProduct(
     @Args("input") input: CreateProductDto,
-    @CurrentUser() user: User,
+    @GQLCurrentUser() user: User,
   ): Promise<Product> {
     return this.productService.create(input, user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation("updateProduct")
   async updateProduct(
     @Args("id") id: string,
     @Args("input") input: UpdateProductDto,
-    @CurrentUser() user: User,
+    @GQLCurrentUser() user: User,
   ): Promise<Product> {
-    return this.productService.update(id, input);
+    return this.productService.update(id, input, user.id);
   }
 }

@@ -3,13 +3,13 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  NotFoundException,
 } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
@@ -25,9 +25,7 @@ import { memoryStorage } from "multer";
 //@Roles(['admin'])
 @Controller("product")
 export class ProductController {
-  constructor(
-    private readonly productService: ProductService,
-  ) {}
+  constructor(private readonly productService: ProductService) {}
 
   @Post("/create/:imageId?")
   @UseGuards(JwtAuthGuard)
@@ -62,7 +60,9 @@ export class ProductController {
   @UseGuards(JwtAuthGuard)
   @Get("property")
   async getMyProducts(@CurrentUser() user) {
-    return this.productService.findByUserId(user.id);}
+    return this.productService.findByUserId(user.id);
+  }
+
   @Get(":id")
   async findOne(@Param("id") id: string) {
     const product = await this.productService.findOne(id);
@@ -71,7 +71,6 @@ export class ProductController {
     }
     return product;
   }
-  
 
   @Get("owner/:id")
   async getProductOwner(@Param("id") id: string) {
@@ -80,8 +79,12 @@ export class ProductController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id, updateProductDto);
+  update(
+    @Param("id") id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @CurrentUser() user,
+  ) {
+    return this.productService.update(id, updateProductDto, user.id);
   }
 
   @Delete(":id")

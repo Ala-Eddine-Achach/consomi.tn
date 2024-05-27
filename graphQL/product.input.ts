@@ -1,5 +1,4 @@
-// products/dto/product.input.ts
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, Float, InputType, Int } from "@nestjs/graphql";
 
 @InputType()
 export class ProductInput {
@@ -9,7 +8,7 @@ export class ProductInput {
   @Field(() => String)
   description: string;
 
-  @Field(() => Int)
+  @Field(() => Float) // Assuming price is a floating-point number
   price: number;
 
   @Field(() => Int)
@@ -30,9 +29,6 @@ export class ProductInput {
   @Field(() => String)
   location: string;
 
-  @Field(() => String)
-  image: string;
-
-  @Field(() => String)
-  details: string;
+  @Field(() => JSON) // Assuming details is a JSON object
+  details: any; // Replace 'any' with a specific type if you know the structure
 }
