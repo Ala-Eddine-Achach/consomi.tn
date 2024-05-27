@@ -1,11 +1,15 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ProductService } from './product.service';
-import { ProductController } from './product.controller';
-import { ProductSchema } from 'src/schemas/Product.schema';
-import { ImageModule } from 'src/image/image.module';
-import { Subscription, SubscriptionSchema } from 'src/subscription/entities/subscription.entity';
-import { SubscriptionService } from 'src/subscription/subscription.service';
+import { Module } from "@nestjs/common";
+import { MongooseModule } from "@nestjs/mongoose";
+import { ProductService } from "./product.service";
+import { ProductController } from "./product.controller";
+import { ProductSchema } from "src/schemas/Product.schema";
+import { ImageModule } from "src/image/image.module";
+import {
+  Subscription,
+  SubscriptionSchema,
+} from "src/subscription/entities/subscription.entity";
+import { SubscriptionService } from "src/subscription/subscription.service";
+import { ProductResolver } from "../../graphQL/product.resolver";
 
 @Module({
   imports: [
@@ -26,7 +30,7 @@ import { SubscriptionService } from 'src/subscription/subscription.service';
     ImageModule,
   ],
   controllers: [ProductController],
-  providers: [ProductService, SubscriptionService],
+  providers: [ProductService, SubscriptionService, ProductResolver],
   exports: [ProductService],
 })
 export class ProductModule {}
