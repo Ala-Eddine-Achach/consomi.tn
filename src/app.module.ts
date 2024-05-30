@@ -8,10 +8,11 @@ import { ProductModule } from "./product/product.module";
 import { AuthModule } from "./auth/auth.module";
 import * as dotenv from "dotenv";
 import { ImageModule } from "./image/image.module";
-import { APP_INTERCEPTOR } from "@nestjs/core";
-import { MorganInterceptor, MorganModule } from "nest-morgan";
+import { MorganModule } from "nest-morgan";
 import { ParseBoolPipe } from "@nestjs/common/pipes";
-import { ConversationModule } from './conversation/conversation.module';
+import { ConversationModule } from "./conversation/conversation.module";
+import { GraphQLModule } from "@nestjs/graphql";
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { SocketModule } from './socket/socket.module';
 import { ProductHistoryModule } from './product-history/product-history.module';
 
@@ -19,8 +20,15 @@ dotenv.config();
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      process.env.MONGO_URI    ),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      include: [ProductModule],
+      driver: ApolloDriver,
+      typePaths: ["graphQL/schema.graphql"],
+
+      sortSchema: true,
+    }),
+
+    MongooseModule.forRoot(process.env.MONGO_URI),
 
     ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
@@ -40,10 +48,10 @@ dotenv.config();
       provide: APP_FILTER,
       useClass: LoggingExceptionFilter,
     }, */
-    {
+    /*{
       provide: APP_INTERCEPTOR,
       useClass: MorganInterceptor("combined"),
-    },
+    },*/
   ],
 })
 export class AppModule {}
