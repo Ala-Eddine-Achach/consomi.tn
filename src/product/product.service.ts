@@ -155,7 +155,7 @@ export class ProductService {
     const id = require("uuid").v4();
     // TODO  : Forward Image to ML Model
     // const imageDiscovery = await this.discoverImage(imageContent);
-    const imageDiscovery = this.MOCKdiscoverImage(imageContent);
+    const imageDiscovery = await this.discoverImage(imageContent);
 
     console.log(imageDiscovery);
     await fs.writeFile(`uploads/temp/${id}.jpg`, Buffer.from(imageContent));
